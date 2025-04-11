@@ -1,5 +1,7 @@
 # supervisorctl-client
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/mperusso/supervisorctl-client.svg)](https://pkg.go.dev/github.com/mperusso/supervisorctl-client)
+
 A Go client for interacting with supervisor programs.
 
 ## Features
