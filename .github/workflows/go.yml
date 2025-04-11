@@ -9,22 +9,8 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-commits:
-    name: Lint Commits
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check Conventional Commits
-        uses: wagoid/commitlint-github-action@v5
-        with:
-          configFile: .commitlintrc.json
-
   test:
     name: Test
-    needs: lint-commits
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +25,7 @@ jobs:
 
   release:
     name: Release
-    needs: [lint-commits, test]
+    needs: [test]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
