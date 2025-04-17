@@ -279,6 +279,17 @@ func TestParseStatusLine(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "no such process",
+			line: "program3 ERROR (no such process)",
+			expectedInfo: ProgramInfo{
+				Name:        "program3",
+				State:       1000,
+				StateName:   "UNKNOWN",
+				Description: "no such process",
+			},
+			expectedError: nil,
+		},
+		{
 			name:          "invalid line",
 			line:          "invalid",
 			expectedInfo:  ProgramInfo{},

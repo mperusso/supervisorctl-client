@@ -15,7 +15,7 @@
 //
 //	// Get status of specific programs
 //	programs, err = client.Status(supervisorctl.StatusOptions{
-//		Names: []string{"monitor:Monitor", "monitor-inmap-kanban:Monitor"},
+//		Names: []string{"monitor:Monitor", "monitor-teste:Monitor"},
 //	})
 //
 //	// Control programs
@@ -28,6 +28,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"log"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -97,6 +98,7 @@ func (c *Client) Status(opts StatusOptions) ([]ProgramInfo, error) {
 	}
 	cmd := c.commandExecutor.Command("supervisorctl", args...)
 	output, err := cmd.Output()
+	log.Printf("output: %s", output)
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			if exitErr.ExitCode() == 3 {
@@ -171,6 +173,16 @@ func parseStatusLine(line string) (ProgramInfo, error) {
 	name := parts[0]
 	state := parts[1]
 	description := strings.Join(parts[2:], " ")
+
+	// Handle "no such process" error
+	if strings.Contains(description, "no such process") {
+		return ProgramInfo{
+			Name:        name,
+			State:       1000, // UNKNOWN
+			StateName:   "UNKNOWN",
+			Description: "no such process",
+		}, nil
+	}
 
 	stateMap := map[string]int{
 		"STOPPED":  0,
