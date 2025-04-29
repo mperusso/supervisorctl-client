@@ -28,7 +28,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -98,7 +97,6 @@ func (c *Client) Status(opts StatusOptions) ([]ProgramInfo, error) {
 	}
 	cmd := c.commandExecutor.Command("supervisorctl", args...)
 	output, err := cmd.Output()
-	log.Printf("output: %s", output)
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			if exitErr.ExitCode() == 3 {
