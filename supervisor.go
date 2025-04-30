@@ -101,7 +101,7 @@ func (c *Client) Status(opts StatusOptions) ([]ProgramInfo, error) {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			if exitErr.ExitCode() == 3 {
 			} else {
-				return nil, fmt.Errorf("failed to get status: %w - output %v ", err, output)
+				return nil, fmt.Errorf("failed to get status: %w - output %s ", err, string(output))
 			}
 		} else {
 			return nil, fmt.Errorf("failed to get status: %w", err)
