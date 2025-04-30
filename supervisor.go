@@ -99,7 +99,7 @@ func (c *Client) Status(opts StatusOptions) ([]ProgramInfo, error) {
 	output, err := cmd.Output()
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
-			if exitErr.ExitCode() == 3 {
+			if exitErr.ExitCode() == 3 || exitErr.ExitCode() == 4 {
 			} else {
 				return nil, fmt.Errorf("failed to get status: %w - output %s ", err, string(output))
 			}
