@@ -148,7 +148,6 @@ func parseStatusLine(line string) (ProgramInfo, error) {
 	state := parts[1]
 	description := strings.Join(parts[2:], " ")
 
-	// Handle "no such process" error
 	if strings.Contains(description, "no such process") {
 		return ProgramInfo{
 			Name:        name,
