@@ -1,27 +1,3 @@
-// Package supervisorctl provides a Go client for interacting with supervisor programs.
-//
-// The package allows you to manage supervisor programs, get their status, and control their lifecycle.
-// It provides a simple interface to interact with supervisorctl commands and parse their output.
-//
-// Example:
-//
-//	client := supervisorctl.NewClient("")
-//
-//	// Get status of all programs
-//	programs, err := client.Status(supervisorctl.StatusOptions{})
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	// Get status of specific programs
-//	programs, err = client.Status(supervisorctl.StatusOptions{
-//		Names: []string{"monitor:Monitor", "monitor-teste:Monitor"},
-//	})
-//
-//	// Control programs
-//	err = client.Start("monitor:Monitor")
-//	err = client.Stop("monitor:Monitor")
-//	err = client.Restart("monitor:Monitor")
 package supervisorctl
 
 import (
