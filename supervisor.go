@@ -172,13 +172,16 @@ func (c *Client) RestartAsync(programName string) error {
 // parseStatusLine parses a single line of supervisorctl status output.
 func parseStatusLine(line string) (ProgramInfo, error) {
 	parts := strings.Fields(line)
-	if len(parts) < 3 {
+	if len(parts) < 2 {
 		return ProgramInfo{}, fmt.Errorf("invalid status line: %s", line)
 	}
 
 	name := parts[0]
 	state := parts[1]
-	description := strings.Join(parts[2:], " ")
+	description := ""
+	if len(parts) > 2 {
+		description = strings.Join(parts[2:], " ")
+	}
 
 	if strings.Contains(description, "no such process") {
 		return ProgramInfo{
