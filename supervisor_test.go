@@ -23,6 +23,10 @@ type MockCmd struct {
 	Err        error
 }
 
+func (m *MockCmd) Start() error {
+	return m.Err
+}
+
 func (m *MockCmd) Run() error {
 	return m.Err
 }
@@ -236,6 +240,84 @@ func TestRestart(t *testing.T) {
 
 			err := client.Restart(tt.programName)
 
+			if tt.expectedError != nil {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			mockExecutor.AssertExpectations(t)
+		})
+	}
+}
+
+func TestStartAsync(t *testing.T) {
+	tests := []struct {
+		name          string
+		programName   string
+		expectedError error
+	}{
+		{
+			name:          "successful start async",
+			programName:   "program1",
+			expectedError: nil,
+		},
+		{
+			name:          "command error async",
+			programName:   "program1",
+			expectedError: errors.New("command failed"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExecutor := new(MockCommandExecutor)
+			mockCmd := &MockCmd{Err: tt.expectedError}
+
+			mockExecutor.On("Command", "supervisorctl", []string{"start", tt.programName}).Return(mockCmd)
+
+			client := &Client{configFile: "", commandExecutor: mockExecutor}
+
+			err := client.StartAsync(tt.programName)
+			if tt.expectedError != nil {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			mockExecutor.AssertExpectations(t)
+		})
+	}
+}
+
+func TestRestartAsync(t *testing.T) {
+	tests := []struct {
+		name          string
+		programName   string
+		expectedError error
+	}{
+		{
+			name:          "successful restart async",
+			programName:   "program1",
+			expectedError: nil,
+		},
+		{
+			name:          "command error restart async",
+			programName:   "program1",
+			expectedError: errors.New("command failed"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExecutor := new(MockCommandExecutor)
+			mockCmd := &MockCmd{Err: tt.expectedError}
+
+			mockExecutor.On("Command", "supervisorctl", []string{"restart", tt.programName}).Return(mockCmd)
+
+			client := &Client{configFile: "", commandExecutor: mockExecutor}
+
+			err := client.RestartAsync(tt.programName)
 			if tt.expectedError != nil {
 				assert.Error(t, err)
 			} else {

@@ -10,6 +10,7 @@ A Go client for interacting with supervisor programs.
 - Start programs
 - Stop programs
 - Restart programs
+- Start/Restart without waiting (async)
 - JSON output support
 - Error handling
 
@@ -55,10 +56,14 @@ func main() {
 		Names: []string{"program_name", "program_name2"},
 	})
 
-	// Control programs
+ // Control programs
 	err = client.Start("program_name")
 	err = client.Stop("program_name")
 	err = client.Restart("program_name")
+
+	// Start/Restart without waiting (async)
+	_ = client.StartAsync("program_name")   // returns immediately
+	_ = client.RestartAsync("program_name") // returns immediately
 }
 ```
 

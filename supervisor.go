@@ -21,8 +21,13 @@ type ProgramInfo struct {
 }
 
 // Cmd interface for executing commands
+// Implemented by *exec.Cmd and mocks in tests.
 type Cmd interface {
+	// Start begins command execution without waiting for it to complete.
+	Start() error
+	// Run starts the command and waits for it to complete.
 	Run() error
+	// Output runs the command and returns its standard output.
 	Output() ([]byte, error)
 }
 
@@ -98,7 +103,7 @@ func (c *Client) Status(opts StatusOptions) ([]ProgramInfo, error) {
 	return programs, nil
 }
 
-// Start starts a supervisor program.
+// Start starts a supervisor program and waits until supervisorctl returns.
 func (c *Client) Start(programName string) error {
 	args := []string{"start", programName}
 	if c.configFile != "" {
@@ -107,6 +112,20 @@ func (c *Client) Start(programName string) error {
 	cmd := c.commandExecutor.Command("supervisorctl", args...)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to start program: %w", err)
+	}
+	return nil
+}
+
+// StartAsync starts a supervisor program but does not wait for supervisorctl to finish.
+// This returns as soon as the command is started by the OS.
+func (c *Client) StartAsync(programName string) error {
+	args := []string{"start", programName}
+	if c.configFile != "" {
+		args = append([]string{"-c", c.configFile}, args...)
+	}
+	cmd := c.commandExecutor.Command("supervisorctl", args...)
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start program (async): %w", err)
 	}
 	return nil
 }
@@ -133,6 +152,19 @@ func (c *Client) Restart(programName string) error {
 	cmd := c.commandExecutor.Command("supervisorctl", args...)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to restart program: %w", err)
+	}
+	return nil
+}
+
+// RestartAsync restarts a supervisor program without waiting for supervisorctl to finish.
+func (c *Client) RestartAsync(programName string) error {
+	args := []string{"restart", programName}
+	if c.configFile != "" {
+		args = append([]string{"-c", c.configFile}, args...)
+	}
+	cmd := c.commandExecutor.Command("supervisorctl", args...)
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to restart program (async): %w", err)
 	}
 	return nil
 }
