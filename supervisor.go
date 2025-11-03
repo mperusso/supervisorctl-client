@@ -176,7 +176,7 @@ func parseStatusLine(line string) (ProgramInfo, error) {
 		return ProgramInfo{}, fmt.Errorf("invalid status line: %s", line)
 	}
 
-	name := parts[0]
+	name := strings.TrimSuffix(parts[0], ":")
 	state := parts[1]
 	description := ""
 	if len(parts) > 2 {
